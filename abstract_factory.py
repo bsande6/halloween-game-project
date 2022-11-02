@@ -1,5 +1,5 @@
 
-class AbstractFactory:
+class AbstractFactory():
     @abstractmethod
     def create_zombie(self):
         pass
