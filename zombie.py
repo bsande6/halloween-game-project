@@ -10,6 +10,9 @@ class BasicZombie():
         self.y_vel=0
         self.speed = 5
     
+    def draw():
+        
+    
 class RunningZombie():
     def __init__():
         # spawn in random position??
