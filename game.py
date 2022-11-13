@@ -1,6 +1,8 @@
 import tkinter as tk
 import random
 
+from hero import Hero
+
 score = 0
 time = 0
 in_play = False
@@ -31,14 +33,22 @@ class App():
         self.label.pack()
 
         self.root.bind('<Return>', self.startGame)
+      
+
+
 
     def startGame(self,event):
-    
+       
         self.in_play = True
         self.countTime()
         self.scoreLabel.config(text = "Score: " + str(score))
         self.timeLabel.config(text = "Time: " + str(time))
-        self.hero= Hero()
+        # self.hero= Hero(self.root)
+        # self.root.bind("<KeyPress-Left>", lambda e: Hero.left(e))
+        # self.root.bind("<KeyPress-Right>", lambda e: Hero.right(e))
+        # self.root.bind("<KeyPress-Up>", lambda e: Hero.up(e))
+        # self.root.bind("<KeyPress-Down>", lambda e: Hero.down(e))
+        # self.hero.movement()
 
         # factories
         # spawn player
