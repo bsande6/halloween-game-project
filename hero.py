@@ -1,5 +1,5 @@
 class Hero():
-    def __init__(root):
+    def __init__(self, root, canvas):
         self.root = root
         # spawn in random position??
         self.x = 0
@@ -8,10 +8,11 @@ class Hero():
         self.x_vel=0
         self.y_vel=0
         self.speed = 5
-
+        self.canvas = canvas
         # temporary sprite
         self.rectangle = self.canvas.create_rectangle(
                          5, 5, 25, 25, fill = "black")
+        self.movement()
     
     def draw():
         pass
@@ -25,24 +26,20 @@ class Hero():
         self.canvas.after(100, self.movement)
 
     def left(self, event):
-        print(event.keysym)
         self.x = -5
         self.y = 0
      
     # for motion in positive x direction
     def right(self, event):
-        print(event.keysym)
         self.x = 5
         self.y = 0
      
     # for motion in positive y direction
     def up(self, event):
-        print(event.keysym)
         self.x = 0
         self.y = -5
      
     # for motion in negative y direction
     def down(self, event):
-        print(event.keysym)
         self.x = 0
         self.y = 5
