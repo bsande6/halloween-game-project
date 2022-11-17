@@ -43,3 +43,10 @@ class Hero():
     def down(self, event):
         self.x = 0
         self.y = 5
+
+    def stop(self, event):
+        self.x = 0
+        self.y = 0
+
+    def getSprite(self):
+        return self.rectangle
