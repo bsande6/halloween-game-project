@@ -1,11 +1,20 @@
 import tkinter as tk
 import random
 
+from PIL import Image, ImageTk
+
 from hero import Hero
+
+
+
 
 score = 0
 time = 0
 in_play = False
+
+class Cons:
+    BOARD_WIDTH = 500
+    BOARD_HEIGHT = 400
   
 # function that will start the game.
 class App():
@@ -28,7 +37,7 @@ class App():
         self.score = 0
         self.in_play = False
         self.hero = None
-        self.canvas = tk.Canvas(root, bg="white", height=500, width=400)
+        self.canvas = tk.Canvas(root, bg="white", height=Cons.BOARD_WIDTH, width=Cons.BOARD_HEIGHT)
         #self.canvas.pack()
 
                     
@@ -36,26 +45,38 @@ class App():
         self.label.pack()
 
         self.root.bind('<Return>', self.startGame)
-      
-
-
 
     def startGame(self,event):
-       
+        self.root.unbind('<Return>')
         self.in_play = True
         self.countTime()
         self.scoreLabel.config(text = "Score: " + str(score))
         self.timeLabel.config(text = "Time: " + str(time))
         self.hero= Hero(self.root, self.canvas)
         self.canvas.pack()
+        
         self.root.bind("<KeyPress-Left>", lambda e: self.hero.left(e))
         self.root.bind("<KeyPress-Right>", lambda e: self.hero.right(e))
         self.root.bind("<KeyPress-Up>", lambda e: self.hero.up(e))
         self.root.bind("<KeyPress-Down>", lambda e: self.hero.down(e))
+        #self.root.bind("<KeyPress-s">, lambda e: self.hero.stop(e))
+        self.pumpkin_x = 0
+        self.pumpkin_y = 0
+        self.pumpkin_img = Image.open("media/pumpkin.jpg")
+        self.pumpkin_img=self.pumpkin_img.resize((30, 30))
+        self.pumpkin = ImageTk.PhotoImage(self.pumpkin_img)
+        self.spawnPumpkin()
+
+        self.checkPumpkinCollision()
 
         # factories
-        # spawn player
+      
         # spawn zombies 
+    def spawnPumpkin(self):
+        self.pumpkin_x = random.randint(30, Cons.BOARD_WIDTH-30)
+        self.pumpkin_y = random.randint(30, Cons.BOARD_HEIGHT-30) 
+        self.canvas.create_image(self.pumpkin_x, self.pumpkin_y, image=self.pumpkin)
+    
 
     def countTime(self):
         if self.in_play:
@@ -67,10 +88,26 @@ class App():
             # run the function again after 1 second.
             self.timeLabel.after(1000, self.countTime)
 
+    def checkPumpkinCollision(self):
+        print(self.canvas.coords(self.hero.getSprite()))
+        user_coords = self.canvas.coords(self.hero.getSprite())
+        #if user.coords 
+        coll = self.canvas.find_overlapping(user_coords[0], user_coords[1], user_coords[2], user_coords[3])
+        
+        coll = list(coll)   
+        coll.remove(self.hero.getSprite())
+        print(coll)
+        if self.pumpkin in coll:
+            print("here")
+
+        # This might be cpu intense 
+        self.root.after(500, self.checkPumpkinCollision)
+
     def endGame(self):
         self.scoreLabel.config(text = "Final Score: " + str(score))
         self.timeLabel.config(text = "Final Time: " + str(time))
         
+
 
 if __name__ == "__main__":
   root = tk.Tk()
