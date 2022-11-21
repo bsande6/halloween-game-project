@@ -9,3 +9,7 @@ Factory design is used for different zombie types and a clone pattern is used to
 requirements can be installed using 
 
     pip -r requirements.txt
+
+Entry point is 
+
+    python game.py
