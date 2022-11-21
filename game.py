@@ -4,6 +4,7 @@ import random
 from PIL import Image, ImageTk
 
 from hero import Hero
+from pumpkin import Pumpkin
 #from abstract_factory import BasicZombieFactory, RunningZombieFactory, RandomZombieFactory
 from abstract_factory import ZombieFactory
 
@@ -55,11 +56,12 @@ class App():
         self.root.bind("<KeyPress-Down>", lambda e: self.hero.down(e))
         self.root.bind("<space>", lambda e: self.hero.stop(e))
 
-        self.pumpkin_x = 0
-        self.pumpkin_y = 0
-        self.pumpkin_img = Image.open("media/pumpkin.jpg")
-        self.pumpkin_img=self.pumpkin_img.resize((30, 30))
-        self.pumpkin = ImageTk.PhotoImage(self.pumpkin_img)
+        # self.pumpkin_x = 0
+        # self.pumpkin_y = 0
+        # self.pumpkin_img = Image.open("media/pumpkin.jpg")
+        # self.pumpkin_img=self.pumpkin_img.resize((30, 30))
+        # self.pumpkin = ImageTk.PhotoImage(self.pumpkin_img)
+        self.pumpkin_template = Pumpkin(self.canvas)
         self.spawnPumpkin()
 
         self.checkPumpkinCollision()
@@ -75,11 +77,13 @@ class App():
         zombie.movement()
         return zombie
 
-        
     def spawnPumpkin(self):
-        self.pumpkin_x = random.randint(40, Cons.BOARD_HEIGHT-30)
-        self.pumpkin_y = random.randint(40, Cons.BOARD_WIDTH-30) 
-        self.pmpk = self.canvas.create_image(self.pumpkin_x, self.pumpkin_y, image=self.pumpkin)
+        # clone pattern shuold allow this to be faster
+        pumpkin_clone = self.pumpkin_template.clone() 
+        self.pmpk = pumpkin_clone.draw()
+        #self.pumpkin_x = random.randint(40, Cons.BOARD_HEIGHT-30)
+        #self.pumpkin_y = random.randint(40, Cons.BOARD_WIDTH-30) 
+        #self.pmpk = self.canvas.create_image(self.pumpkin_x, self.pumpkin_y, image=self.pumpkin)
 
     def countTime(self):
         if self.in_play:
@@ -92,6 +96,7 @@ class App():
             self.timeLabel.after(1000, self.countTime)
 
     def checkPumpkinCollision(self):
+        
         if self.in_play:
             user_coords = self.canvas.coords(self.hero.getSprite())
             #if user.coords 
@@ -113,6 +118,7 @@ class App():
                 self.endGame()
 
             # This might be cpu intense 
+            # collisions are not perfect becuase of the rate of the funciton calls, this can be increased if desired 
             self.root.after(500, self.checkPumpkinCollision)
 
     def restart(self, event):

@@ -2,6 +2,8 @@ import abc
 
 from zombie import BasicZombie, RunningZombie, RandomZombie
 
+# i thnik we should jusst make this a factory pattern instead of abstract factory, not really sure how much that changes  
+
 class AbstractFactory(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
