@@ -16,3 +16,7 @@ class BasicZombieFactory(AbstractFactory):
 class RunningZombieFactory(AbstractFactory):
     def create_zombie(self):
         return RunningZombie()
+
+class RandomZombieFactory(AbstractFactory):
+    def create_zombie(self):
+        return RandomZombie()
