@@ -12,15 +12,26 @@ class Hero():
         # temporary sprite
         self.rectangle = self.canvas.create_rectangle(
                          5, 5, 25, 25, fill = "black")
+        self.width = int(self.canvas.cget("width"))
+        self.height = int(self.canvas.cget("height"))
         self.movement()
+        
     
     def draw():
         pass
 
     def movement(self):
- 
-        # This is where the move() method is called
-        # This moves the rectangle to x, y coordinates
+        coords = self.canvas.coords(self.rectangle)
+        if coords[0] < 10 and self.x < 0:
+            self.x = 0
+        elif coords[0] > (self.width - 30) and self.x > 0:
+            self.x = 0
+        if coords[1] < 10 and self.y < 0:
+            self.y =0
+        elif coords[1] > (self.height - 30) and self.y > 0:
+            self.y = 0
+
+
         self.canvas.move(self.rectangle, self.x, self.y)
  
         self.canvas.after(100, self.movement)
@@ -31,6 +42,7 @@ class Hero():
      
     # for motion in positive x direction
     def right(self, event):
+        #if self.canvas.coords(self.rectangle) >
         self.x = 5
         self.y = 0
      

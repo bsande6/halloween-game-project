@@ -88,7 +88,6 @@ class App():
             self.timeLabel.after(1000, self.countTime)
 
     def checkPumpkinCollision(self):
-        print(self.canvas.coords(self.hero.getSprite()))
         user_coords = self.canvas.coords(self.hero.getSprite())
         #if user.coords 
         coll = self.canvas.find_overlapping(user_coords[0], user_coords[1], user_coords[2], user_coords[3])
