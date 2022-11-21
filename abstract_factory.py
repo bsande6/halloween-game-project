@@ -1,6 +1,10 @@
+import abc
 
-class AbstractFactory():
-    @abstractmethod
+from zombie import BasicZombie, RunningZombie
+
+class AbstractFactory(metaclass=abc.ABCMeta):
+
+    @abc.abstractmethod
     def create_zombie(self):
         pass
 
