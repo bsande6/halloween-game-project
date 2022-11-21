@@ -1,55 +1,112 @@
+import random
+import abc
+
 """ Contains class implementations for Zombie Types"""
 
-class BasicZombie():
-    def __init__(self):
-        # spawn in random position??
-        self.x_pos=0
-        self.y_pos=0
-        # maybe use these for movement
-        self.x_vel=0
-        self.y_vel=0
-        self.speed = 5
+class Zombie():
+    __inplay = True
     
-        # self.rectangle = self.canvas.create_rectangle(
-        #                  5, 5, 25, 25, fill = "tan")
+    def __init__(self, canvas):
+        self.x = 0
+        self.y = 0
+        
+        # maybe set static variable for max number of zombies allowed on board
+
+        # should not have to resave this for each new zombie
+        # maybe make static and only pass once somehow
+        self.canvas = canvas
+        self.width = int(self.canvas.cget("width"))
+        self.height = int(self.canvas.cget("height"))
+       
+    
+    @abc.abstractmethod
+    def draw(self):
+        """draw each type of zombie slightly differently"""
+        pass
+
+    @abc.abstractmethod
+    def movement(self):
+        """implements different movement patterns for different zombie types"""
+        pass
+    
+    def getCanvas():
+        return self.canvas
+
+    @staticmethod
+    def getInPlay():
+        return Zombie.__inplay
+
+    @staticmethod
+    def setInPlay(inplay):
+        
+        # this needs to change inplay for all instances 
+        Zombie.__inplay = inplay
+
+    
+
+class BasicZombie(Zombie):
+    def __init__(self):
+        self.max_speed = 5
+    
+    def draw(self):
+        # spawn in random positon, adjust size slightly
+        self.circle = self.canvas.create_oval(
+                         250, 250, 200, 200, fill = "gray")
+    def movement(self):
+        # needs to follow user
+        pass
+    
+class LargeZombie(Zombie):
+     def __init__(self):
+        self.max_speed = 3
+
+     def draw(self):
+        # make larger and slower than other zombies
+        # spawn in random positon, adjust size slightly
+        self.circle = self.canvas.create_oval(
+                         250, 250, 200, 200, fill = "gray")
+
+
+        
+class RunningZombie(Zombie):
+    def __init__(self):
+        self.max_speed = 7
+
+    def draw(self):
+        self.circle = self.canvas.create_oval(
+                         250, 250, 200, 200, fill = "purple")
+    
+    def movement(self):
+        # needs to follow user positions
+        pass
+
+class RandomZombie(Zombie):
+    def __init__(self, canvas):
+        super(RandomZombie, self).__init__(canvas)
+        self.max_speed = 5
         
     
-class RunningZombie():
-    def __init__(self):
+    def draw(self):
         # spawn in random position??
-        self.x_pos=0
-        self.y_pos=0
-        # maybe use these for movement
-        self.x_vel=0
-        self.y_vel=0
-        self.speed = 10
-
-class RandomZombie():
-    def __init__(self):
-        # spawn in random position??
-        self.x=0
-        self.y=0
-        # maybe use these for movement
-        self.x_vel=0
-        self.y_vel=0
-        self.speed = 10
-        self.movement()
+        self.circle = self.canvas.create_oval(
+                         250, 250, 200, 200, fill = "brown")
 
     def movement(self):
-        self.x = rand.randint(0, 5)
-        self.y = rand.randint(0, 5)
-        # coords = self.canvas.coords(self.rectangle)
-        # if coords[0] < 10 and self.x < 0:
-        #     self.x = 0
-        # elif coords[0] > (self.width - 30) and self.x > 0:
-        #     self.x = 0
-        # if coords[1] < 10 and self.y < 0:
-        #     self.y =0
-        # elif coords[1] > (self.height - 30) and self.y > 0:
-        #     self.y = 0
+        if Zombie.getInPlay():
+            self.x = random.randint(-1*self.max_speed, self.max_speed)
+            self.y = random.randint(-1*self.max_speed, self.max_speed)
+            coords = self.canvas.coords(self.circle)
+            if coords[0] < 10 and self.x < 0:
+                self.x = 0
+            elif coords[0] > (self.width - 30) and self.x > 0:
+                self.x = 0
+            if coords[1] < 10 and self.y < 0:
+                self.y =0
+            elif coords[1] > (self.height - 30) and self.y > 0:
+                self.y = 0
 
-        # either return x and y or pass in canvas during init 
-        # self.canvas.move(self.rectangle, self.x, self.y)
- 
-        # self.canvas.after(1000, self.movement)
-    
+            # either return x and y or pass in canvas during init 
+            self.canvas.move(self.circle, self.x, self.y)
+            # new random input
+            self.canvas.after(1000, self.movement)
+        
