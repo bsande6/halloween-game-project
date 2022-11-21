@@ -4,7 +4,8 @@ import random
 from PIL import Image, ImageTk
 
 from hero import Hero
-from abstract_factory import BasicZombieFactory, RunningZombieFactory
+#from abstract_factory import BasicZombieFactory, RunningZombieFactory, RandomZombieFactory
+from abstract_factory import ZombieFactory
 
 
 class Cons:
@@ -24,7 +25,6 @@ class App():
         self.scoreLabel = tk.Label(self.root, text = "Press enter to start",
                                         font = ('Helvetica', 12))
         self.scoreLabel.pack()
-
         self.timeLabel = tk.Label(self.root)
         self.timeLabel.pack()
         self.time =0
@@ -33,10 +33,8 @@ class App():
         self.in_play = False
         self.hero = None
         self.canvas = tk.Canvas(root, bg="green", height=Cons.BOARD_WIDTH, width=Cons.BOARD_HEIGHT)
-
         self.label = tk.Label(font = ('Helvetica', 60))
         self.label.pack()
-
         self.root.bind('<Return>', self.startGame)
         
 
@@ -62,20 +60,19 @@ class App():
         self.spawnPumpkin()
 
         self.checkPumpkinCollision()
-        self.basic_zombie_factory = BasicZombieFactory()
+        self.factory = ZombieFactory()
 
-        self.basic_zombie_factory.create_zombie()
+    def spawnZombie(self):
+        # choose what type of zombie in this function either randomly or based on score/time
+       
+        self.factory.create_zombie("random")
+        
 
-
-        # factories
-      
-        # spawn zombies 
         
     def spawnPumpkin(self):
         self.pumpkin_x = random.randint(40, Cons.BOARD_HEIGHT-30)
         self.pumpkin_y = random.randint(40, Cons.BOARD_WIDTH-30) 
         self.pmpk = self.canvas.create_image(self.pumpkin_x, self.pumpkin_y, image=self.pumpkin)
-      
 
     def countTime(self):
         if self.in_play:
@@ -99,15 +96,22 @@ class App():
             self.score += 1
             self.scoreLabel.config(text = "Score: "
                                 + str(self.score))
+            coll.remove(self.pmpk)
             self.canvas.delete(self.pmpk)
             self.spawnPumpkin()
+        
+        if len(coll) > 0:
+            # must be colliding with zombie
+            self.endGame()
 
         # This might be cpu intense 
         self.root.after(500, self.checkPumpkinCollision)
 
     def endGame(self):
+        # show scores then prompt to play again
         self.scoreLabel.config(text = "Final Score: " + str(score))
         self.timeLabel.config(text = "Final Time: " + str(time))
+        
         
 
 
