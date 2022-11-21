@@ -10,7 +10,8 @@ class BasicZombie():
         self.y_vel=0
         self.speed = 5
     
-    def draw():
+    self.rectangle = self.canvas.create_rectangle(
+                         5, 5, 25, 25, fill = "tan")
         
     
 class RunningZombie():

@@ -4,13 +4,8 @@ import random
 from PIL import Image, ImageTk
 
 from hero import Hero
+from abstract_factory import BasicZombieFactory, RunningZombieFactory
 
-
-
-
-score = 0
-time = 0
-in_play = False
 
 class Cons:
     BOARD_WIDTH = 500
@@ -37,21 +32,20 @@ class App():
         self.score = 0
         self.in_play = False
         self.hero = None
-        self.canvas = tk.Canvas(root, bg="white", height=Cons.BOARD_WIDTH, width=Cons.BOARD_HEIGHT)
-        #self.canvas.pack()
+        self.canvas = tk.Canvas(root, bg="green", height=Cons.BOARD_WIDTH, width=Cons.BOARD_HEIGHT)
 
-                    
         self.label = tk.Label(font = ('Helvetica', 60))
         self.label.pack()
 
         self.root.bind('<Return>', self.startGame)
+        
 
     def startGame(self,event):
         self.root.unbind('<Return>')
         self.in_play = True
         self.countTime()
-        self.scoreLabel.config(text = "Score: " + str(score))
-        self.timeLabel.config(text = "Time: " + str(time))
+        self.scoreLabel.config(text = "Score: " + str(self.score))
+        self.timeLabel.config(text = "Time: " + str(self.time))
         self.hero= Hero(self.root, self.canvas)
         self.canvas.pack()
         
@@ -68,15 +62,20 @@ class App():
         self.spawnPumpkin()
 
         self.checkPumpkinCollision()
+        self.basic_zombie_factory = BasicZombieFactory()
+
+        self.basic_zombie_factory.create_zombie()
+
 
         # factories
       
         # spawn zombies 
+        
     def spawnPumpkin(self):
-        self.pumpkin_x = random.randint(30, Cons.BOARD_WIDTH-30)
-        self.pumpkin_y = random.randint(30, Cons.BOARD_HEIGHT-30) 
-        self.canvas.create_image(self.pumpkin_x, self.pumpkin_y, image=self.pumpkin)
-    
+        self.pumpkin_x = random.randint(40, Cons.BOARD_HEIGHT-30)
+        self.pumpkin_y = random.randint(40, Cons.BOARD_WIDTH-30) 
+        self.pmpk = self.canvas.create_image(self.pumpkin_x, self.pumpkin_y, image=self.pumpkin)
+      
 
     def countTime(self):
         if self.in_play:
@@ -96,9 +95,13 @@ class App():
         
         coll = list(coll)   
         coll.remove(self.hero.getSprite())
-        print(coll)
-        if self.pumpkin in coll:
-            print("here")
+
+        if self.pmpk in coll:
+            self.score += 1
+            self.scoreLabel.config(text = "Score: "
+                                + str(self.score))
+            self.canvas.delete(self.pmpk)
+            self.spawnPumpkin()
 
         # This might be cpu intense 
         self.root.after(500, self.checkPumpkinCollision)
