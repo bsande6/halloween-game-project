@@ -73,6 +73,7 @@ class App():
         # probably should have made a gameboard class which has canvas as an attribute that we can get it from but im just gonna pass it in for ease
         # at this point
         zombie = self.factory.create_zombie("random", self.canvas)
+        zombie.setInPlay(True)
         zombie.draw()
         zombie.movement()
         return zombie
@@ -94,6 +95,9 @@ class App():
                                     
             # run the function again after 1 second.
             self.timeLabel.after(1000, self.countTime)
+        if self.time % 5 == 0:
+            self.spawnZombie()
+
 
     def checkPumpkinCollision(self):
         
@@ -119,13 +123,13 @@ class App():
 
             # This might be cpu intense 
             # collisions are not perfect becuase of the rate of the funciton calls, this can be increased if desired 
-            self.root.after(500, self.checkPumpkinCollision)
+            self.root.after(5, self.checkPumpkinCollision)
 
     def restart(self, event):
         self.root.destroy()
         root = tk.Tk()
         app = App(root)
-        root.mainloop()
+        root.mainloop() 
 
     def endGame(self):
         # show scores then prompt to play again
@@ -140,7 +144,8 @@ class App():
         self.zombie.setInPlay(False)
     
         # destroy hero and zombies to prevent errors in move functions
-        #del self.hero
+        del self.hero
+        del self.zombie
 
         self.canvas.delete('all')
         self.instructions.config(text = "Game Over!", font = ('Helvetica', 20))

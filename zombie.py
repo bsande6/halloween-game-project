@@ -84,6 +84,9 @@ class RandomZombie(Zombie):
     def __init__(self, canvas):
         super(RandomZombie, self).__init__(canvas)
         self.max_speed = 5
+        self.xbias = random.randint(-1, 1)
+        self.ybias = random.randint(-1, 1)
+        self.resetBias = False
         
     
     def draw(self):
@@ -95,18 +98,34 @@ class RandomZombie(Zombie):
         if Zombie.getInPlay():
             self.x = random.randint(-1*self.max_speed, self.max_speed)
             self.y = random.randint(-1*self.max_speed, self.max_speed)
+
+            if random.randint(1,4) < 4: # adding movement bias to make zombies better
+                self.x = self.xbias * self.max_speed
+                self.y = self.ybias * self.max_speed
+            #print( "self x: " + str(self.x) + " self y: " + str(self.y))
             coords = self.canvas.coords(self.circle)
             if coords[0] < 10 and self.x < 0:
                 self.x = 0
+                self.resetBias = True
             elif coords[0] > (self.width - 30) and self.x > 0:
                 self.x = 0
+                self.resetBias = True
             if coords[1] < 10 and self.y < 0:
                 self.y =0
+                self.resetBias = True
             elif coords[1] > (self.height - 30) and self.y > 0:
                 self.y = 0
+                self.resetBias = True
+
+            if self.resetBias:
+                self.xbias = random.randint(-1, 1)
+                self.ybias = random.randint(-1, 1)
+                self.resetBias = False
+                print("resetting bias")
 
             # either return x and y or pass in canvas during init 
             self.canvas.move(self.circle, self.x, self.y)
             # new random input
-            self.canvas.after(1000, self.movement)
+            self.canvas.after(100, self.movement)
+
         

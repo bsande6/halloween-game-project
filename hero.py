@@ -31,7 +31,7 @@ class Hero():
                 self.y = 0
 
             self.canvas.move(self.rectangle, self.x, self.y)
-            self.canvas.after(100, self.movement)
+            self.canvas.after(5, self.movement)
 
     def left(self, event):
         self.x = -5

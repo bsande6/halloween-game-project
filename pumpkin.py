@@ -32,8 +32,8 @@ class Pumpkin(Prototype):
         self.y = 0
         
     def draw(self):
-        self.x = random.randint(40, self.height-30)
-        self.y = random.randint(40, self.width-30)
+        self.x = random.randint(100, self.height-100)
+        self.y = random.randint(100, self.width-100)
         return self.canvas.create_image(self.x, self.y, image=self.pumpkin)
 
     def clone(self):
