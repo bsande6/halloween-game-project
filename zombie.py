@@ -57,28 +57,88 @@ class BasicZombie(Zombie):
         pass
     
 class LargeZombie(Zombie):
-     def __init__(self):
+    def __init__(self, canvas):
+        super(LargeZombie, self).__init__(canvas)
         self.max_speed = 3
-
-     def draw(self):
-        # make larger and slower than other zombies
-        # spawn in random positon, adjust size slightly
+        self.xbias = random.randint(-1, 1)
+        self.ybias = random.randint(-1, 1)
+        self.resetBias = False
+        
+    
+    def draw(self):
+        # spawn in random position??
         self.circle = self.canvas.create_oval(
-                         250, 250, 200, 200, fill = "gray")
+                         400, 400, 350, 350, fill = "gray")
+
+    def movement(self):
+        if Zombie.getInPlay():
+            self.x = random.randint(-1*self.max_speed, self.max_speed)
+            self.y = random.randint(-1*self.max_speed, self.max_speed)
+
+            if random.randint(1,4) < 4: # adding movement bias to make zombies better
+                self.x = self.xbias * self.max_speed
+                self.y = self.ybias * self.max_speed
+            #print( "self x: " + str(self.x) + " self y: " + str(self.y))
+            coords = self.canvas.coords(self.circle)
+            if coords[0] < 10 and self.x < 0:
+                self.x = 0
+                self.resetBias = True
+            elif coords[0] > (self.width - 30) and self.x > 0:
+                self.x = 0
+                self.resetBias = True
+            if coords[1] < 10 and self.y < 0:
+                self.y =0
+                self.resetBias = True
+            elif coords[1] > (self.height - 30) and self.y > 0:
+                self.y = 0
+                self.resetBias = True
+
+            if self.resetBias:
+                self.xbias = random.randint(-1, 1)
+                self.ybias = random.randint(-1, 1)
+                self.resetBias = False
+                print("resetting bias")
+
+            # either return x and y or pass in canvas during init 
+            self.canvas.move(self.circle, self.x, self.y)
+            # new random input
+            self.canvas.after(100, self.movement)
 
 
         
 class RunningZombie(Zombie):
-    def __init__(self):
+    def __init__(self, canvas, hero):
+        super(RunningZombie, self).__init__(canvas)
         self.max_speed = 7
+        self.player = hero
 
     def draw(self):
         self.circle = self.canvas.create_oval(
-                         250, 250, 200, 200, fill = "purple")
+                         150, 150, 100, 100, fill = "purple")
     
     def movement(self):
         # needs to follow user positions
-        pass
+        if Zombie.getInPlay():
+            # determine x and y based on player position
+            player_pos = self.canvas.coords(self.player.getSprite())
+            zombie_pos = self.canvas.coords(self.circle)
+
+            self.x = (zombie_pos[0] - player_pos[0])*-1
+            self.y = (zombie_pos[1] - player_pos[1])*-1
+
+            if (abs(self.x) > self.max_speed):
+                if(self.x > 0): self.x = self.max_speed
+                elif(self.x < 0): self.x = self.max_speed*-1
+
+            if (abs(self.y) > self.max_speed):
+                if(self.y > 0): self.y = self.max_speed
+                elif(self.y < 0): self.y = self.max_speed*-1
+
+
+            # then move
+            self.canvas.move(self.circle, self.x, self.y)
+            # new random input
+            self.canvas.after(100, self.movement)
 
 class RandomZombie(Zombie):
     def __init__(self, canvas):

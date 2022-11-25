@@ -1,6 +1,6 @@
 import abc
 
-from zombie import BasicZombie, RunningZombie, RandomZombie
+from zombie import LargeZombie, RunningZombie, RandomZombie
 
 # i thnik we should jusst make this a factory pattern instead of abstract factory, not really sure how much that changes  
 
@@ -27,11 +27,11 @@ class AbstractFactory(metaclass=abc.ABCMeta):
 # I think one factory is probably easier
 # I dont think we actually even need the abstract factory
 class ZombieFactory(AbstractFactory):
-    def create_zombie(self, zombie_type, canvas):
-        if zombie_type == "basic":
-            return BasicZombie(canvas)
+    def create_zombie(self, zombie_type, canvas, hero):
+        if zombie_type == "large":
+            return LargeZombie(canvas)
         elif zombie_type == "random":
             return RandomZombie(canvas)
         elif zombie_type == "running":
-            return RunningZombie(canvas)
+            return RunningZombie(canvas, hero)
 

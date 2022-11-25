@@ -72,7 +72,18 @@ class App():
         # choose what type of zombie in this function either randomly or based on score/time
         # probably should have made a gameboard class which has canvas as an attribute that we can get it from but im just gonna pass it in for ease
         # at this point
-        zombie = self.factory.create_zombie("random", self.canvas)
+
+        # randomly determine what kind of zombie spawns
+        num = random.randint(1, 4)
+        ztype = "random"
+        if( num == 1 or num == 2 ):
+            ztype = "random"
+        elif( num == 3 ):
+            ztype = "large"
+        elif( num == 4 ):
+            ztype = "running"
+
+        zombie = self.factory.create_zombie(ztype, self.canvas, self.hero)
         zombie.setInPlay(True)
         zombie.draw()
         zombie.movement()
@@ -97,6 +108,7 @@ class App():
             self.timeLabel.after(1000, self.countTime)
         if self.time % 5 == 0:
             self.spawnZombie()
+
 
 
     def checkPumpkinCollision(self):
