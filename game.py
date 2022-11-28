@@ -35,7 +35,19 @@ class App():
         self.score = 0
         self.in_play = False
         self.hero = None
-        self.canvas = tk.Canvas(root, bg="green", height=Cons.BOARD_WIDTH, width=Cons.BOARD_HEIGHT)
+        self.canvas = tk.Canvas(root, height=Cons.BOARD_WIDTH, width=Cons.BOARD_HEIGHT)
+        # self.background = tk.Canvas(root, height=Cons.BOARD_WIDTH, width=Cons.BOARD_HEIGHT)
+
+        #load background img
+        self.dirt_img = Image.open("media/dirt1.png")
+        #self.dirt_img = self.dirt_img.resize(())
+        self.dirtimg = ImageTk.PhotoImage(self.dirt_img)
+
+        self.bg = self.canvas.create_image(0,0, image=self.dirtimg, anchor="nw")
+
+        # self.backgroundLabel = tk.Label(self.canvas, image=self.dirtimg)
+        # self.backgroundLabel.place(x=0,y=0,relwidth=1, relheight=1)
+
         self.label = tk.Label(font = ('Helvetica', 60))
         self.label.pack()
         self.root.bind('<Return>', self.startGame)
@@ -48,7 +60,11 @@ class App():
         self.scoreLabel.config(text = "Score: " + str(self.score))
         self.timeLabel.config(text = "Time: " + str(self.time))
         self.hero= Hero(self.root, self.canvas)
+
+
+        
         self.canvas.pack()
+        # self.background.place(x=self.canvas.winfo_rootx(), y=self.canvas.winfo_rooty())
         
         self.root.bind("<KeyPress-Left>", lambda e: self.hero.left(e))
         self.root.bind("<KeyPress-Right>", lambda e: self.hero.right(e))
@@ -74,7 +90,8 @@ class App():
         # at this point
 
         # randomly determine what kind of zombie spawns
-        num = random.randint(1, 4)
+        # num = random.randint(1, 4)
+        num = 4 # for testing
         ztype = "random"
         if( num == 1 or num == 2 ):
             ztype = "random"
@@ -114,12 +131,13 @@ class App():
     def checkPumpkinCollision(self):
         
         if self.in_play:
-            user_coords = self.canvas.coords(self.hero.getSprite())
+            user_coords = self.canvas.bbox(self.hero.getSprite()) #self.canvas.coords(self.hero.getSprite())
             #if user.coords 
             coll = self.canvas.find_overlapping(user_coords[0], user_coords[1], user_coords[2], user_coords[3])
             
             coll = list(coll)   
             coll.remove(self.hero.getSprite())
+            coll.remove(self.bg)
 
             if self.pmpk in coll:
                 self.score += 1

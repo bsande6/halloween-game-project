@@ -1,6 +1,6 @@
 import random
 import abc
-
+from PIL import Image, ImageTk
 """ Contains class implementations for Zombie Types"""
 
 class Zombie():
@@ -17,6 +17,7 @@ class Zombie():
         self.canvas = canvas
         self.width = int(self.canvas.cget("width"))
         self.height = int(self.canvas.cget("height"))
+        self.framecounter = 0
        
     
     @abc.abstractmethod
@@ -59,16 +60,35 @@ class BasicZombie(Zombie):
 class LargeZombie(Zombie):
     def __init__(self, canvas):
         super(LargeZombie, self).__init__(canvas)
-        self.max_speed = 3
+        self.max_speed = 1
         self.xbias = random.randint(-1, 1)
         self.ybias = random.randint(-1, 1)
         self.resetBias = False
+
+        #load sprite images
+        self.PILimg1 = Image.open("media/zombie1.png")
+        self.PILimg1 = self.PILimg1.resize((64, 84)) 
+        self.PILimg2 = Image.open("media/zombie2.png")
+        self.PILimg2 = self.PILimg2.resize((84, 104)) 
+        self.PILimg3 = Image.open("media/zombie3.png")
+        self.PILimg3 = self.PILimg3.resize((84, 104)) 
         
     
     def draw(self):
         # spawn in random position??
-        self.circle = self.canvas.create_oval(
-                         400, 400, 350, 350, fill = "gray")
+        # self.circle = self.canvas.create_oval(
+        #                  250, 250, 200, 200, fill = "brown")
+
+        #picking zombie sprite
+        num = random.randint(1,3)
+        if num == 1:
+            self.tkimg = ImageTk.PhotoImage(self.PILimg1)
+        elif num == 2:
+            self.tkimg = ImageTk.PhotoImage(self.PILimg2)
+        else:
+            self.tkimg = ImageTk.PhotoImage(self.PILimg3)
+        
+        self.img = self.canvas.create_image((random.randint(45,325),random.randint(45,425)),image=self.tkimg)
 
     def movement(self):
         if Zombie.getInPlay():
@@ -79,7 +99,7 @@ class LargeZombie(Zombie):
                 self.x = self.xbias * self.max_speed
                 self.y = self.ybias * self.max_speed
             #print( "self x: " + str(self.x) + " self y: " + str(self.y))
-            coords = self.canvas.coords(self.circle)
+            coords = self.canvas.coords(self.img)
             if coords[0] < 10 and self.x < 0:
                 self.x = 0
                 self.resetBias = True
@@ -100,7 +120,7 @@ class LargeZombie(Zombie):
                 print("resetting bias")
 
             # either return x and y or pass in canvas during init 
-            self.canvas.move(self.circle, self.x, self.y)
+            self.canvas.move(self.img, self.x, self.y)
             # new random input
             self.canvas.after(100, self.movement)
 
@@ -112,16 +132,32 @@ class RunningZombie(Zombie):
         self.max_speed = 7
         self.player = hero
 
+        #load sprite images
+        self.PILimg1 = Image.open("media/angry_zombie.png")
+        self.PILimg1 = self.PILimg1.resize((32, 42))
+        self.PILimg2 = Image.open("media/angry_zombie.png")
+        self.PILimg2 = self.PILimg2.resize((32, 42))
+        self.PILimg3 = Image.open("media/angry_zombie.png")
+        self.PILimg3 = self.PILimg3.resize((32, 42))
+
     def draw(self):
-        self.circle = self.canvas.create_oval(
-                         150, 150, 100, 100, fill = "purple")
+        #picking zombie sprite
+        num = random.randint(1,3)
+        if num == 1:
+            self.tkimg = ImageTk.PhotoImage(self.PILimg1)
+        elif num == 2:
+            self.tkimg = ImageTk.PhotoImage(self.PILimg2)
+        else:
+            self.tkimg = ImageTk.PhotoImage(self.PILimg3)
+        
+        self.img = self.canvas.create_image((random.randint(45,325),random.randint(45,425)),image=self.tkimg)
     
     def movement(self):
         # needs to follow user positions
         if Zombie.getInPlay():
             # determine x and y based on player position
             player_pos = self.canvas.coords(self.player.getSprite())
-            zombie_pos = self.canvas.coords(self.circle)
+            zombie_pos = self.canvas.coords(self.img)
 
             self.x = (zombie_pos[0] - player_pos[0])*-1
             self.y = (zombie_pos[1] - player_pos[1])*-1
@@ -136,7 +172,7 @@ class RunningZombie(Zombie):
 
 
             # then move
-            self.canvas.move(self.circle, self.x, self.y)
+            self.canvas.move(self.img, self.x, self.y)
             # new random input
             self.canvas.after(100, self.movement)
 
@@ -147,12 +183,28 @@ class RandomZombie(Zombie):
         self.xbias = random.randint(-1, 1)
         self.ybias = random.randint(-1, 1)
         self.resetBias = False
+
+        #load sprite images
+        self.PILimg1 = Image.open("media/zombie1.png")
+        self.PILimg1 = self.PILimg1.resize((32, 42))
+        self.PILimg2 = Image.open("media/zombie2.png")
+        self.PILimg2 = self.PILimg2.resize((32, 42))
+        self.PILimg3 = Image.open("media/zombie3.png")
+        self.PILimg3 = self.PILimg3.resize((32, 42))
         
     
     def draw(self):
-        # spawn in random position??
-        self.circle = self.canvas.create_oval(
-                         250, 250, 200, 200, fill = "brown")
+
+        #picking zombie sprite
+        num = random.randint(1,3)
+        if num == 1:
+            self.tkimg = ImageTk.PhotoImage(self.PILimg1)
+        elif num == 2:
+            self.tkimg = ImageTk.PhotoImage(self.PILimg2)
+        else:
+            self.tkimg = ImageTk.PhotoImage(self.PILimg3)
+        
+        self.img = self.canvas.create_image((random.randint(45,325),random.randint(45,425)),image=self.tkimg)
 
     def movement(self):
         if Zombie.getInPlay():
@@ -163,7 +215,8 @@ class RandomZombie(Zombie):
                 self.x = self.xbias * self.max_speed
                 self.y = self.ybias * self.max_speed
             #print( "self x: " + str(self.x) + " self y: " + str(self.y))
-            coords = self.canvas.coords(self.circle)
+            coords = self.canvas.coords(self.img)
+    
             if coords[0] < 10 and self.x < 0:
                 self.x = 0
                 self.resetBias = True
@@ -181,10 +234,11 @@ class RandomZombie(Zombie):
                 self.xbias = random.randint(-1, 1)
                 self.ybias = random.randint(-1, 1)
                 self.resetBias = False
-                print("resetting bias")
 
             # either return x and y or pass in canvas during init 
-            self.canvas.move(self.circle, self.x, self.y)
+            # self.canvas.move(self.circle, self.x, self.y)
+
+            self.canvas.move(self.img, self.x, self.y)
             # new random input
             self.canvas.after(100, self.movement)
 

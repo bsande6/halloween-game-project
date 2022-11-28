@@ -1,3 +1,5 @@
+from tkinter import *
+from PIL import ImageTk, Image
 class Hero():
     def __init__(self, root, canvas):
         self.root = root
@@ -12,15 +14,21 @@ class Hero():
         self.canvas = canvas
         # temporary sprite
         # maybe spawn in center of board
-        self.rectangle = self.canvas.create_rectangle(
-                         5, 5, 25, 25, fill = "black")
+
+        self.PILimg1 = Image.open("media/cat.png")
+        self.PILimg1 = self.PILimg1.resize((32, 28))
+        self.tkimg = ImageTk.PhotoImage(self.PILimg1)
+
+        self.heroimg = self.canvas.create_image((0,0),image=self.tkimg)
+
         self.width = int(self.canvas.cget("width"))
         self.height = int(self.canvas.cget("height"))
         self.movement()
+
     
     def movement(self):
         if self.inplay == True:
-            coords = self.canvas.coords(self.rectangle)
+            coords = self.canvas.coords(self.heroimg)
             if coords[0] < 10 and self.x < 0:
                 self.x = 0
             elif coords[0] > (self.width - 30) and self.x > 0:
@@ -30,7 +38,7 @@ class Hero():
             elif coords[1] > (self.height - 30) and self.y > 0:
                 self.y = 0
 
-            self.canvas.move(self.rectangle, self.x, self.y)
+            self.canvas.move(self.heroimg, self.x, self.y)
             self.canvas.after(5, self.movement)
 
     def left(self, event):
@@ -58,7 +66,7 @@ class Hero():
         self.y = 0
 
     def getSprite(self):
-        return self.rectangle
+        return self.heroimg
 
     def setInPlay(self, inplay):
         self.inplay = inplay

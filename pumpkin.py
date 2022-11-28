@@ -25,8 +25,8 @@ class Pumpkin(Prototype):
         # self.canvas = canvas
         # self.width = int(self.canvas.cget("width"))
         # self.height = int(self.canvas.cget("height"))
-        self.pumpkin_img = Image.open("media/pumpkin.jpg")
-        self.pumpkin_img=self.pumpkin_img.resize((30, 30))
+        self.pumpkin_img = Image.open("media/pumpkin.png")
+        self.pumpkin_img=self.pumpkin_img.resize((40, 30))
         self.pumpkin = ImageTk.PhotoImage(self.pumpkin_img)
         self.x = 0
         self.y = 0
