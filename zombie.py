@@ -9,11 +9,6 @@ class Zombie():
     def __init__(self, canvas):
         self.x = 0
         self.y = 0
-        
-        # maybe set static variable for max number of zombies allowed on board
-
-        # should not have to resave this for each new zombie
-        # maybe make static and only pass once somehow
         self.canvas = canvas
         self.width = int(self.canvas.cget("width"))
         self.height = int(self.canvas.cget("height"))
@@ -214,7 +209,7 @@ class RandomZombie(Zombie):
             if random.randint(1,4) < 4: # adding movement bias to make zombies better
                 self.x = self.xbias * self.max_speed
                 self.y = self.ybias * self.max_speed
-            #print( "self x: " + str(self.x) + " self y: " + str(self.y))
+
             coords = self.canvas.coords(self.img)
     
             if coords[0] < 10 and self.x < 0:
