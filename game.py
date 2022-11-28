@@ -17,9 +17,10 @@ class App():
     def __init__(self, root):
         self.root= root
         # configure the root window
-        self.root.title('My Awesome App')
+        self.root.title('Black Cat Zombie Survival Game')
         #self.root.geometry('500x400')
-        self.instructions = tk.Label(self.root, text = "Survive for as long as Possible!",
+        self.instructions = tk.Label(self.root, text = 
+        "Run Away From Zombies! Collect Pumpkins!\nStay Alive as Long as Possible!",
                                         font = ('Helvetica', 12))
         self.instructions.pack() 
         self.scoreLabel = tk.Label(self.root, text = "Press enter to start",
@@ -27,12 +28,26 @@ class App():
         self.scoreLabel.pack()
         self.timeLabel = tk.Label(self.root)
         self.timeLabel.pack()
+
+        self.levelLabel = tk.Label(self.root, text = "",
+                                                    font = ('Helvetica', 14))
+        self.levelLabel.pack(side="bottom")
+
         # this label will not show up if i do not create it here
         self.restartLabel = tk.Label(self.root, text = "",
                                         font = ('Helvetica', 12))
         self.restartLabel.pack()
         self.time =0 
         self.score = 0
+
+        self.level = 1
+        self.spawn_interval = 7
+
+        #probabilities for zombies to spawn (change with each level)
+        self.zRandomProb = 0.75
+        self.zLargeProb = 0.20
+        self.zRunningProb = 0.5
+
         self.in_play = False
         self.hero = None
         self.canvas = tk.Canvas(root, height=Cons.BOARD_WIDTH, width=Cons.BOARD_HEIGHT)
@@ -59,18 +74,20 @@ class App():
         self.countTime()
         self.scoreLabel.config(text = "Score: " + str(self.score))
         self.timeLabel.config(text = "Time: " + str(self.time))
+        self.levelLabel.config(text= "Level 1")
         self.hero= Hero(self.root, self.canvas)
 
 
-        
         self.canvas.pack()
-        # self.background.place(x=self.canvas.winfo_rootx(), y=self.canvas.winfo_rooty())
         
         self.root.bind("<KeyPress-Left>", lambda e: self.hero.left(e))
         self.root.bind("<KeyPress-Right>", lambda e: self.hero.right(e))
         self.root.bind("<KeyPress-Up>", lambda e: self.hero.up(e))
         self.root.bind("<KeyPress-Down>", lambda e: self.hero.down(e))
         self.root.bind("<space>", lambda e: self.hero.stop(e))
+        
+        #hack key to get to level three for demo:
+        self.root.bind("t", lambda e: self.level3())
 
         # self.pumpkin_x = 0
         # self.pumpkin_y = 0
@@ -89,15 +106,14 @@ class App():
         # probably should have made a gameboard class which has canvas as an attribute that we can get it from but im just gonna pass it in for ease
         # at this point
 
-        # randomly determine what kind of zombie spawns
-        # num = random.randint(1, 4)
-        num = 4 # for testing
+        # randomly determine what kind of zombie spawns based on zProbabilites
+        num = random.random()
         ztype = "random"
-        if( num == 1 or num == 2 ):
+        if( num < self.zRandomProb ):
             ztype = "random"
-        elif( num == 3 ):
+        elif( num < (self.zRandomProb+self.zLargeProb) ):
             ztype = "large"
-        elif( num == 4 ):
+        else:
             ztype = "running"
 
         zombie = self.factory.create_zombie(ztype, self.canvas, self.hero)
@@ -123,9 +139,42 @@ class App():
                                     
             # run the function again after 1 second.
             self.timeLabel.after(1000, self.countTime)
-        if self.time % 5 == 0:
+
+        if self.time == 30 or self.score == 10:
+            if( self.level != 3):
+                self.level2()
+
+        if self.time == 60 or self.score == 20:
+            self.level3()
+
+        if self.time % self.spawn_interval == 0:
             self.spawnZombie()
 
+    def level1(self):
+        self.level = 1
+        self.levelLabel.config(text="Level 2")
+        self.spawn_interval = 5
+        self.zRandomProb = 0.33
+        self.zLargeProb = 0.33
+        self.zRunningProb = 0.33
+
+    # function to change difficulty parameters for level 2 difficulty
+    def level2(self):
+        self.level = 2
+        self.levelLabel.config(text="Level 2")
+        self.spawn_interval = 5
+        self.zRandomProb = 0.33
+        self.zLargeProb = 0.33
+        self.zRunningProb = 0.33
+
+    # function to change difficulty parameters for level 3 difficulty
+    def level3(self):
+        self.level = 3
+        self.levelLabel.config(text="Level 3")
+        self.spawn_interval = 5
+        self.zRandomProb = 0.10
+        self.zLargeProb = 0.15
+        self.zRunningProb = 0.75
 
 
     def checkPumpkinCollision(self):
@@ -172,6 +221,7 @@ class App():
 
         self.hero.setInPlay(False)
         self.zombie.setInPlay(False)
+        
     
         # destroy hero and zombies to prevent errors in move functions
         del self.hero
